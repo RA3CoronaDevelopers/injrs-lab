@@ -10,7 +10,7 @@ At most time, you can use `injrs` as a simple tool.
 
 ```bash
 USAGE:
-injrs PROCESS_NAME/PID [Libraies...]
+injrs PROCESS_PATH/PID [Libraies...]
 
 EXAMPLES:
 1. Inject test.dll to process Calc.exe
@@ -38,33 +38,14 @@ target/i686-pc-windows-msvc/release/examples/source.exe
 target/i686-pc-windows-msvc/debug/injrs.exe
 ```
 
+Run the demo process independently:
+
+```bash
+./target/i686-pc-windows-msvc/release/examples/source.exe
+```
+
 Try to inject the demo dll to your target process:
 
 ```bash
 ./target/i686-pc-windows-msvc/debug/injrs.exe target/i686-pc-windows-msvc/release/examples/source.exe target/i686-pc-windows-msvc/release/examples/inject.dll
-```
-
-## Usage as library
-
-You also can write a injector project using `injrs` as a library.
-
-```rust
-use injrs::process_windows::*;
-use injrs::inject_windows::*;
-
-fn main() {
-    let name = "Calc.exe";
-    let dll = "./my-demo-dll.dll";
-    let p = Process::find_first_by_name(name).unwrap();
-
-    print!("inject dll to process => ");
-    match process.inject(dll) {
-        Err(e) => {
-            println!("error: {}", e);
-        },
-        Ok(_) => {
-            println!("success");
-        }
-    }
-}
 ```
