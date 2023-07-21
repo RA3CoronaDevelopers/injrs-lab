@@ -2,25 +2,7 @@
 
 DLL injector library and tool written in Rust.
 
-[![crates.io](https://img.shields.io/crates/v/injrs.svg)](https://crates.io/crates/injrs)
-[![Documentation](https://docs.rs/injrs/badge.svg)](https://docs.rs/injrs)
 [![Apache-2.0](https://img.shields.io/crates/l/injrs.svg)](https://github.com/jiusanzhou/injrs/blob/master/LICENSE)
-
-## Install
-
-Go to [releases page](releases) download the latest binary.
-
-Or if you have rust installed, use cargo to install:
-
-```bash
-cargo install injrs
-```
-
-Install rust if you don't have.
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
 
 ## Usage
 
@@ -86,5 +68,3 @@ fn main() {
     }
 }
 ```
-
-For more detail you can check [src/main.rs](./src/main.rs).
