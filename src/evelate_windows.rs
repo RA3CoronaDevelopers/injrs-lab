@@ -1,7 +1,6 @@
+use std::ffi::CString;
 use std::io;
 use std::ptr::null_mut;
-use std::ffi::CString;
-use std::os::windows::ffi::OsStringExt;
 
 use crate::utils::*;
 use crate::winapi::*;
@@ -16,19 +15,33 @@ pub fn evelate_privileges() -> Result<(), io::Error> {
             ..Default::default()
         }],
     };
-    if FALSE == unsafe{OpenProcessToken(GetCurrentProcess(), 
-        TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &mut htk)} {
+    if FALSE
+        == unsafe {
+            OpenProcessToken(
+                GetCurrentProcess(),
+                TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+                &mut htk,
+            )
+        }
+    {
         println!("open process token failed");
         return Err(get_last_error());
     }
 
-    if FALSE == unsafe{LookupPrivilegeValueA(null_mut(), 
-        CString::new(SE_DEBUG_NAME)?.as_ptr() as _, &mut tkp.Privileges[0].Luid)} {
+    if FALSE
+        == unsafe {
+            LookupPrivilegeValueA(
+                null_mut(),
+                CString::new(SE_DEBUG_NAME)?.as_ptr() as _,
+                &mut tkp.Privileges[0].Luid,
+            )
+        }
+    {
         println!("lookup privilege value failed");
         return Err(get_last_error());
     }
 
-    if FALSE == unsafe{AdjustTokenPrivileges(htk, FALSE, &mut tkp, 0, null_mut(), null_mut())} {
+    if FALSE == unsafe { AdjustTokenPrivileges(htk, FALSE, &mut tkp, 0, null_mut(), null_mut()) } {
         println!("adjust token privilege failed");
         return Err(get_last_error());
     }

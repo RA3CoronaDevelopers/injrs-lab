@@ -1,29 +1,23 @@
-<div align="center">
-
-<img alt="Hello Box Demo" src="./hello-box-demo.png" width="100">
-
 # `injrs`
 
-**DLL injector library and tool written in Rust. Rust 实现的DLL注入工具/库**
+DLL injector library and tool written in Rust.
 
-[![CI](https://github.com/jiusanzhou/injrs/actions/workflows/ci.yml/badge.svg)](https://github.com/jiusanzhou/injrs/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/injrs.svg)](https://crates.io/crates/injrs)
 [![Documentation](https://docs.rs/injrs/badge.svg)](https://docs.rs/injrs)
-[![dependency status](https://deps.rs/repo/github/jiusanzhou/injrs/status.svg)](https://deps.rs/repo/github/jiusanzhou/injrs)
 [![Apache-2.0](https://img.shields.io/crates/l/injrs.svg)](https://github.com/jiusanzhou/injrs/blob/master/LICENSE)
-
-</div>
 
 ## Install
 
 Go to [releases page](releases) download the latest binary.
 
 Or if you have rust installed, use cargo to install:
+
 ```bash
 cargo install injrs
 ```
 
 Install rust if you don't have.
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
@@ -46,21 +40,26 @@ EXAMPLES:
 
 ## DLL Demo
 
-The code in [examples/hellobox](./examples/hellobox) is a simple message box dll for testing injector.
-
 You can build with command:
+
 ```bash
-cargo build --release --example hellobox
+cargo build --release --example inject
+cargo build --release --example source
+cargo build
 ```
 
 Build target will locate in:
+
 ```bash
-target/i686-pc-windows-msvc/release/examples/hellobox.dll
+target/i686-pc-windows-msvc/release/examples/inject.dll
+target/i686-pc-windows-msvc/release/examples/source.exe
+target/i686-pc-windows-msvc/debug/injrs.exe
 ```
 
 Try to inject the demo dll to your target process:
+
 ```bash
-injrs PID/PNAME target/i686-pc-windows-msvc/release/examples/hellobox.dll
+./target/i686-pc-windows-msvc/debug/injrs.exe target/i686-pc-windows-msvc/release/examples/source.exe target/i686-pc-windows-msvc/release/examples/inject.dll
 ```
 
 ## Usage as library
@@ -88,4 +87,4 @@ fn main() {
 }
 ```
 
-for more detail you can check [src/main.rs](./src/main.rs).
+For more detail you can check [src/main.rs](./src/main.rs).

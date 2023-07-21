@@ -1,7 +1,6 @@
-#[allow(unused_imports)]
-
-use crate::winapi::*;
 use crate::utils::*;
+#[allow(unused_imports)]
+use crate::winapi::*;
 
 use std::io;
 use std::mem::{self, MaybeUninit};
@@ -9,9 +8,7 @@ use std::mem::{self, MaybeUninit};
 use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
 
-
 pub type ProcessHandle = HANDLE;
-
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Process {
@@ -22,7 +19,6 @@ pub struct Process {
 
 // Create and init the process struct
 impl Process {
-
     pub fn new(handle: ProcessHandle, pid: u32, name: &str) -> Self {
         Self {
             pid: pid,
@@ -32,7 +28,6 @@ impl Process {
     }
 
     pub fn from_pid(pid: u32) -> Option<Self> {
-
         // open process by pid, bacause we need to write message
         // so for simple just open as all access flag
         let handle = unsafe { OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid) };
@@ -52,15 +47,15 @@ impl Process {
         if handle.is_null() {
             return None;
         }
-        
+
         Some(Self::new(handle, pid, name))
     }
 
     pub fn find_first_by_name(name: &str) -> Option<Self> {
         match find_process_by_name(name).unwrap_or_default().first() {
-            // TODO: ugly, shoudl implement copy trait for process
+            // TODO: ugly, should implement copy trait for process
             Some(v) => Process::from_pid(v.pid),
-            None => None
+            None => None,
         }
     }
 
@@ -72,14 +67,12 @@ impl Process {
     }
 
     pub fn from_handle(handle: ProcessHandle) -> Self {
-
         let pid = unsafe { GetProcessId(handle) as u32 };
 
         let name = get_process_name(handle);
 
-        Self {pid, name, handle}
+        Self { pid, name, handle }
     }
-
 }
 
 impl Process {
@@ -87,26 +80,25 @@ impl Process {
         if self.handle.is_null() {
             return Ok(());
         }
-        let result = unsafe{ CloseHandle(self.handle) };
+        let result = unsafe { CloseHandle(self.handle) };
         if result != 0 {
             return Ok(());
         }
         Err(get_last_error())
     }
 
-    pub fn find_module_by_name(dllname: &str) -> Option<MODULEENTRY32> {
+    pub fn find_module_by_name(_dllname: &str) -> Option<MODULEENTRY32> {
         todo!()
     }
 
     pub fn is_wow64(&self) -> Result<bool, io::Error> {
         let mut is_wow64 = MaybeUninit::uninit();
-        let r = unsafe{IsWow64Process(self.handle, is_wow64.as_mut_ptr())};
+        let r = unsafe { IsWow64Process(self.handle, is_wow64.as_mut_ptr()) };
         if r == FALSE {
             return Err(get_last_error());
         }
-        Ok(unsafe{is_wow64.assume_init()} == TRUE)
+        Ok(unsafe { is_wow64.assume_init() } == TRUE)
     }
-
 }
 
 impl Drop for Process {
@@ -118,8 +110,8 @@ impl Drop for Process {
 pub fn get_process_name(handle: ProcessHandle) -> String {
     let mut buf = [0u16; MAX_PATH + 1];
     unsafe {
-        GetModuleBaseNameW(handle, 0 as _, buf.as_mut_ptr(),  MAX_PATH as DWORD + 1);
-        return wchar_to_string(&buf)
+        GetModuleBaseNameW(handle, 0 as _, buf.as_mut_ptr(), MAX_PATH as DWORD + 1);
+        return wchar_to_string(&buf);
     };
 }
 
@@ -133,9 +125,7 @@ pub fn get_process_path(handle: ProcessHandle) -> String {
 
 // TODO: accept callback function
 pub fn find_process_by_name(name: &str) -> Result<Vec<Process>, io::Error> {
-    let handle = unsafe {
-        CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0 as _)
-    };
+    let handle = unsafe { CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0 as _) };
 
     if handle.is_null() || handle == INVALID_HANDLE_VALUE {
         return Err(get_last_error());
@@ -164,16 +154,15 @@ pub fn find_process_by_name(name: &str) -> Result<Vec<Process>, io::Error> {
         // TODO: improve reuse the name and other information
         match Process::from_pid_and_name(entry.th32ProcessID, _name.as_str()) {
             Some(v) => result.push(v),
-            None => {},
+            None => {}
         }
-
     }
 
     Ok(result)
 }
 
-fn char_to_string(chars  : &[i8]) -> String {
-    chars.into_iter().map(|c| { *c as u8 as char }).collect()
+fn char_to_string(chars: &[i8]) -> String {
+    chars.into_iter().map(|c| *c as u8 as char).collect()
 }
 
 pub fn wchar_to_string(slice: &[u16]) -> String {
@@ -184,7 +173,6 @@ pub fn wchar_to_string(slice: &[u16]) -> String {
         None => OsString::from_wide(slice).to_string_lossy().into_owned(),
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -200,8 +188,8 @@ mod tests {
         match Process::find_first_by_name("Code.exe") {
             Some(v) => {
                 println!("get the first process: {}", v.name);
-            },
-            None => {},
+            }
+            None => {}
         }
     }
 
@@ -214,8 +202,8 @@ mod tests {
                 for x in &v {
                     println!("{} {}", x.pid, x.name);
                 }
-            },
-            Err(e) => eprintln!("find process by name error: {}", e)
+            }
+            Err(e) => eprintln!("find process by name error: {}", e),
         }
     }
 }
