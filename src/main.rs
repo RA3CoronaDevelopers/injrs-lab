@@ -56,9 +56,9 @@ fn main() {
             // command.args(&["arg1", "arg2"]);
 
             // 设置启动子进程时的标志
-            command.creation_flags(0x00000008); // DETACHED_PROCESS = 0x00000008，表示创建一个不与控制台相关联的进程
+            // command.creation_flags(0x00000008); // DETACHED_PROCESS = 0x00000008，表示创建一个不与控制台相关联的进程
 
-            // 设置子进程的输出重定向（如果需要的话）
+            // 设置子进程的输出重定向
             command.stdout(Stdio::null());
             command.stderr(Stdio::null());
 
@@ -68,7 +68,7 @@ fn main() {
             // 获取子进程的PID
             let pid = child.id() as u32;
 
-            // 在一个新线程中等待子进程完成（如果不关心子进程的退出状态，也可以不等待）
+            // 在一个新线程中等待子进程完成
             thread::spawn(move || {
                 let _ = child.wait(); // 等待子进程完成，并忽略结果
             });

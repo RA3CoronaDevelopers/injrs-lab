@@ -7,22 +7,6 @@ type MessageBoxWHook = *const unsafe extern "system" fn(HWND, LPCWSTR, LPCWSTR, 
 
 static mut MESSAGE_BOX_W_HOOK_ADDRESS: u64 = 0;
 
-unsafe fn clear_last_error() {
-    use winapi::um::errhandlingapi::SetLastError;
-    SetLastError(0);
-}
-
-unsafe fn show_last_error() {
-    use winapi::um::{
-        errhandlingapi::GetLastError,
-        winuser::{MessageBoxA, MB_OK},
-    };
-
-    let e = GetLastError();
-    let e = format!("{}\0", e.to_string());
-    MessageBoxA(null_mut(), e.as_ptr() as _, "\0".as_ptr() as _, MB_OK);
-}
-
 unsafe extern "system" fn hook_message_box_w(
     h_wnd: HWND,
     _: LPCWSTR,
@@ -31,14 +15,8 @@ unsafe extern "system" fn hook_message_box_w(
 ) -> i32 {
     (*(&MESSAGE_BOX_W_HOOK_ADDRESS as *const _ as MessageBoxWHook))(
         h_wnd,
-        "Ops hooked by Xavier!\0"
-            .encode_utf16()
-            .collect::<Vec<_>>()
-            .as_ptr(),
-        "Ops hooked by Xavier!\0"
-            .encode_utf16()
-            .collect::<Vec<_>>()
-            .as_ptr(),
+        "Triggered!\0".encode_utf16().collect::<Vec<_>>().as_ptr(),
+        "Triggered!\0".encode_utf16().collect::<Vec<_>>().as_ptr(),
         u_type,
     )
 }
@@ -77,20 +55,15 @@ unsafe fn detour(module_name: *const i8, old_func_offset: u64, new_func_address:
 
     let p_address_of_name_ordinals =
         (module_address + (*p_image_export_directory).AddressOfNameOrdinals as u64) as *const u16;
-    //    let p_address_of_names = (module_address + (*p_image_export_directory).AddressOfNames as u64) as *const u32;
     let p_address_of_functions =
         (module_address + (*p_image_export_directory).AddressOfFunctions as u64) as *const u32;
 
     for i in 0..(*p_image_export_directory).NumberOfNames as isize {
         let ordinal = *p_address_of_name_ordinals.offset(i) as isize;
-        //        let name = (module_address + *(p_address_of_names.offset(i)) as u64) as *const i8;
         let p_func_offset = p_address_of_functions.offset(ordinal);
         let func_offset = *p_func_offset as u64;
 
-        //        MessageBoxA(null_mut(), name, "\0".as_ptr() as _, MB_OK);
         if old_func_offset == func_offset {
-            //            MessageBoxA(null_mut(), name, "\0".as_ptr() as _, MB_OK);
-
             if new_func_address > module_address {
                 let mut old_protection = 0u32;
                 VirtualProtect(
@@ -152,7 +125,7 @@ unsafe fn test_message_box_w_hook() -> i32 {
 unsafe extern "system" fn init_hook(_: LPVOID) -> u32 {
     MESSAGE_BOX_W_HOOK_ADDRESS = detour(
         "USER32.dll\0".as_ptr() as _,
-        0x0041B0C0,
+        0x007587B0,
         hook_message_box_w as _,
     );
     test_message_box_w_hook();
