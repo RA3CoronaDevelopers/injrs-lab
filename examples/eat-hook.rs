@@ -143,8 +143,8 @@ unsafe fn test_message_box_w_hook() -> i32 {
         "MessageBoxW\0".as_ptr() as _,
     ) as *const _ as MessageBoxWHook))(
         null_mut(),
-        "Test!\0".encode_utf16().collect::<Vec<_>>().as_ptr(),
-        "Test!\0".encode_utf16().collect::<Vec<_>>().as_ptr(),
+        "Hooked!\0".encode_utf16().collect::<Vec<_>>().as_ptr(),
+        "Hooked!\0".encode_utf16().collect::<Vec<_>>().as_ptr(),
         MB_OK,
     )
 }

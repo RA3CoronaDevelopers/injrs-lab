@@ -33,7 +33,7 @@ cargo build
 Build target will locate in:
 
 ```bash
-target/i686-pc-windows-msvc/release/examples/eat-hook.dll
+target/i686-pc-windows-msvc/release/examples/eat_hook.dll
 target/i686-pc-windows-msvc/release/examples/source.exe
 target/i686-pc-windows-msvc/debug/injrs.exe
 ```
@@ -47,5 +47,5 @@ Run the demo process independently:
 Try to inject the demo dll to your target process:
 
 ```bash
-./target/i686-pc-windows-msvc/debug/injrs.exe target/i686-pc-windows-msvc/release/examples/source.exe target/i686-pc-windows-msvc/release/examples/eat-hook.dll
+./target/i686-pc-windows-msvc/debug/injrs.exe target/i686-pc-windows-msvc/release/examples/source.exe target/i686-pc-windows-msvc/release/examples/eat_hook.dll
 ```
