@@ -125,7 +125,7 @@ unsafe fn test_message_box_w_hook() -> i32 {
 unsafe extern "system" fn init_hook(_: LPVOID) -> u32 {
     MESSAGE_BOX_W_HOOK_ADDRESS = detour(
         "USER32.dll\0".as_ptr() as _,
-        0x007587B0,
+        0x00C2B0C0,
         hook_message_box_w as _,
     );
     test_message_box_w_hook();
