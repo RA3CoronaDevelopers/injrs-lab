@@ -81,24 +81,22 @@ unsafe fn detour(module_name: *const i8, old_func_offset: u64, new_func_address:
                 );
 
                 return module_address + func_offset;
-            } else {
-                let s = format!(
-                    "\
+            }
+            let s = format!(
+                "\
                 new_func_address: {}\n\
                 old_func_address: {}\n\
                 module_address: {}\n\
                 new_func_offset: {}\n\
                 old_func_offset: {}\0",
-                    new_func_address,
-                    old_func_offset + module_address,
-                    module_address,
-                    new_func_address - module_address,
-                    old_func_offset
-                );
-                MessageBoxA(null_mut(), s.as_ptr() as _, "\0".as_ptr() as _, MB_OK);
-
-                break;
-            }
+                new_func_address,
+                old_func_offset + module_address,
+                module_address,
+                new_func_address - module_address,
+                old_func_offset
+            );
+            MessageBoxA(null_mut(), s.as_ptr() as _, "\0".as_ptr() as _, MB_OK);
+            break;
         }
     }
 
